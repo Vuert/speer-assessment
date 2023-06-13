@@ -1,0 +1,10 @@
+<resources>
+
+    <style name="Base.Theme.SpeerTechnologies" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+    </style>
+
+    <style name="Theme.SpeerTechnologies" parent="Base.Theme.SpeerTechnologies" />
+</resources>
