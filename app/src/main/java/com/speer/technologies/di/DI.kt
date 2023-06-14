@@ -1,9 +1,9 @@
 package com.speer.technologies.di
 
-import com.speer.technologies.data.user.datasource.UsersRemoteDatasource
-import com.speer.technologies.data.user.repository.UsersRepositoryImpl
-import com.speer.technologies.datasource.users.datasource.UsersRemoteDatasourceImpl
-import com.speer.technologies.domain.users.repository.UsersRepository
+import com.speer.technologies.data.user.datasource.UserRemoteDatasource
+import com.speer.technologies.data.user.repository.UserRepositoryImpl
+import com.speer.technologies.datasource.users.datasource.UserRemoteDatasourceImpl
+import com.speer.technologies.domain.user.repository.UserRepository
 import com.speer.technologies.presentation.base.datadelegate.PresentationDataDelegate
 import com.speer.technologies.presentation.impl.datadelegate.DefaultPresentationDataDelegate
 import com.speer.technologies.presentation.impl.users.viewmodel.UsersViewModel
@@ -30,12 +30,12 @@ object DI {
     }
 
     private fun getDatasourceModule(): Module = module {
-        single<UsersRemoteDatasource> { UsersRemoteDatasourceImpl() }
+        single<UserRemoteDatasource> { UserRemoteDatasourceImpl() }
     }
 
     private fun getDataModule(): Module = module {
-        single<UsersRepository> {
-            UsersRepositoryImpl(usersRemoteDatasource = get())
+        single<UserRepository> {
+            UserRepositoryImpl(userRemoteDatasource = get())
         }
     }
 
@@ -52,7 +52,7 @@ object DI {
         viewModel {
             UsersViewModel(
                 presentationDataDelegate = get(),
-                usersRepository = get(),
+                userRepository = get(),
             )
         }
     }

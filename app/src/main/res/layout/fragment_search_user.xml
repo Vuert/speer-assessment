@@ -16,18 +16,33 @@
         app:layout_constraintTop_toTopOf="parent"
         app:queryHint="@string/hint_search" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/usersRv"
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchView" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:paddingVertical="@dimen/standard_margin"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchView"
-        tools:listitem="@layout/user_list_item" />
+        app:layout_constraintTop_toBottomOf="@+id/progressBar">
+
+        <include
+            android:id="@+id/layoutUserInfo"
+            layout="@layout/layout_user_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/standard_margin" />
+
+    </ScrollView>
 
     <TextView
         android:id="@+id/emptyUsersTv"

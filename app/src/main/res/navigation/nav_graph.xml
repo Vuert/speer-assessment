@@ -8,8 +8,8 @@
 
     <fragment
         android:id="@+id/usersFragment"
-        android:name="com.speer.technologies.view.impl.fragment.users.fragment.UsersFragment"
+        android:name="com.speer.technologies.view.impl.fragment.searchUser.fragment.SearchUserFragment"
         android:label="UsersFragment"
-        tools:layout="@layout/fragment_users" />
+        tools:layout="@layout/fragment_search_user" />
 
 </navigation>

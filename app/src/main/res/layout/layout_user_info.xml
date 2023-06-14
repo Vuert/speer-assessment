@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/userInfoCl"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/selectableItemBackground"
     android:paddingHorizontal="@dimen/standard_margin"
     android:paddingVertical="@dimen/half_standard_margin">
 
@@ -13,45 +13,46 @@
         android:id="@+id/userAvatarImg"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/userNameTv"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/nameTv"
-        tools:src="@drawable/baseline_person" />
-
-    <TextView
-        android:id="@+id/nameTv"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/standard_margin"
-        android:layout_marginBottom="@dimen/half_standard_margin"
-        android:ellipsize="marquee"
-        android:maxLines="1"
-        app:layout_constraintBottom_toTopOf="@+id/userNameTv"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/userAvatarImg"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="spread_inside"
-        tools:text="Name" />
+        app:layout_constraintWidth_percent="0.2"
+        tools:src="@drawable/baseline_person" />
 
     <TextView
         android:id="@+id/userNameTv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/standard_margin"
+        android:layout_marginBottom="@dimen/half_standard_margin"
+        android:ellipsize="marquee"
+        android:maxLines="1"
+        app:layout_constraintBottom_toTopOf="@+id/nameTv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/userAvatarImg"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="Username" />
+
+    <TextView
+        android:id="@+id/nameTv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/standard_margin"
         android:layout_marginTop="@dimen/half_standard_padding"
         android:ellipsize="marquee"
         android:maxLines="1"
+        app:layout_constraintBottom_toBottomOf="@+id/userAvatarImg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/userAvatarImg"
-        app:layout_constraintTop_toBottomOf="@+id/nameTv"
-        tools:text="Username" />
+        app:layout_constraintTop_toBottomOf="@+id/userNameTv"
+        tools:text="Name" />
 
     <TextView
         android:id="@+id/descriptionTv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/half_standard_padding"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userAvatarImg"
