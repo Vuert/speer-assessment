@@ -10,6 +10,22 @@
         android:id="@+id/usersFragment"
         android:name="com.speer.technologies.view.impl.fragment.searchUser.fragment.SearchUserFragment"
         android:label="UsersFragment"
-        tools:layout="@layout/fragment_search_user" />
+        tools:layout="@layout/fragment_search_user">
+        <action
+            android:id="@+id/action_usersFragment_to_connectionsFragment"
+            app:destination="@id/connectionsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/connectionsFragment"
+        android:name="com.speer.technologies.view.impl.fragment.connections.fragment.ConnectionsFragment"
+        android:label="ConnectionsFragment"
+        tools:layout="@layout/fragment_connections">
+        <argument
+            android:name="user"
+            app:argType="com.speer.technologies.view.impl.common.user.model.ParcelableUser" />
+        <argument
+            android:name="fetchMode"
+            app:argType="com.speer.technologies.presentation.impl.connections.model.FetchMode" />
+    </fragment>
 
 </navigation>

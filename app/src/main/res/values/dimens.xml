@@ -15,5 +15,7 @@
     <dimen name="double_padding">48dp</dimen>
     <dimen name="half_standard_padding">12dp</dimen>
 
-    <dimen name="text_size_default">16sp</dimen>
+    <dimen name="text_size_default">20sp</dimen>
+
+    <dimen name="connection_list_item_height">80dp</dimen>
 </resources>
