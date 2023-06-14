@@ -26,6 +26,18 @@
         <argument
             android:name="fetchMode"
             app:argType="com.speer.technologies.presentation.impl.connections.model.FetchMode" />
+        <action
+            android:id="@+id/action_connectionsFragment_to_connectionProfileFragment"
+            app:destination="@id/connectionProfileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/connectionProfileFragment"
+        android:name="com.speer.technologies.view.impl.fragment.connectionprofile.fragment.ConnectionProfileFragment"
+        android:label="ConnectionProfileFragment"
+        tools:layout="@layout/fragment_connection_profile">
+        <argument
+            android:name="user"
+            app:argType="com.speer.technologies.view.impl.common.user.model.ParcelableUser" />
     </fragment>
 
 </navigation>

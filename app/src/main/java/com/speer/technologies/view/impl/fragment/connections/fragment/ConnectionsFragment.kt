@@ -7,11 +7,13 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.speer.technologies.R
 import com.speer.technologies.databinding.FragmentConnectionsBinding
+import com.speer.technologies.domain.user.model.User
 import com.speer.technologies.presentation.impl.connections.model.FetchMode
 import com.speer.technologies.presentation.impl.connections.viewmodel.ConnectionsViewModel
 import com.speer.technologies.utils.extensions.lifecycle.repeatOnStarted
 import com.speer.technologies.view.base.BaseFragment
 import com.speer.technologies.view.impl.common.user.mapper.ParcelableUserToUserMapper
+import com.speer.technologies.view.impl.common.user.mapper.UserToParcelableUserMapper
 import com.speer.technologies.view.impl.fragment.connections.adapter.ConnectionsAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -67,9 +69,7 @@ class ConnectionsFragment : BaseFragment<FragmentConnectionsBinding, Connections
         binding: FragmentConnectionsBinding,
         viewModel: ConnectionsViewModel,
     ) {
-        val adapter = ConnectionsAdapter(onUserClickListener = {
-            // Add transition to profile screen
-        })
+        val adapter = ConnectionsAdapter(onUserClickListener = ::openConnectionsProfile)
 
         binding.connectionsRv.adapter = adapter
         binding.connectionsRv.addItemDecoration(
@@ -84,6 +84,14 @@ class ConnectionsFragment : BaseFragment<FragmentConnectionsBinding, Connections
                 adapter.submitList(it)
             }
         }
+    }
+
+    private fun openConnectionsProfile(user: User) {
+        val action = ConnectionsFragmentDirections
+            .actionConnectionsFragmentToConnectionProfileFragment(
+                UserToParcelableUserMapper().map(user),
+            )
+        findNavController().navigate(action)
     }
 
     private fun initSwipeRefreshLayout(

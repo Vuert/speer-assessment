@@ -1,10 +1,8 @@
 package com.speer.technologies.view.impl.fragment.searchUser.fragment
 
 import android.os.Bundle
-import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.View
-import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
@@ -16,9 +14,10 @@ import com.speer.technologies.presentation.impl.searchUsers.model.UserState
 import com.speer.technologies.presentation.impl.searchUsers.viewmodel.SearchUserViewModel
 import com.speer.technologies.utils.extensions.common.EMPTY
 import com.speer.technologies.utils.extensions.lifecycle.repeatOnStarted
-import com.speer.technologies.utils.view.ImageUtil
 import com.speer.technologies.view.base.BaseFragment
 import com.speer.technologies.view.impl.common.user.mapper.UserToParcelableUserMapper
+import com.speer.technologies.view.impl.common.userprofile.hide
+import com.speer.technologies.view.impl.common.userprofile.show
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 
@@ -61,62 +60,32 @@ class SearchUserFragment : BaseFragment<FragmentSearchUserBinding, SearchUserVie
         viewLifecycleOwner.repeatOnStarted {
             viewModel.user.collectLatest {
                 binding.apply {
-                    TransitionManager.beginDelayedTransition(root, AutoTransition())
+                    TransitionManager.beginDelayedTransition(root)
                     when (it) {
                         UserState.Empty -> {
-                            layoutUserInfo.followersTv.setOnClickListener(null)
-                            layoutUserInfo.followingsTv.setOnClickListener(null)
-                            scrollView.visibility = View.GONE
+                            layoutUserInfo.hide()
                             emptyUsersTv.visibility = View.VISIBLE
                             emptyUsersTv.setText(R.string.start_typing_username)
                         }
 
                         UserState.NotFound -> {
-                            layoutUserInfo.followersTv.setOnClickListener(null)
-                            layoutUserInfo.followingsTv.setOnClickListener(null)
-                            scrollView.visibility = View.GONE
+                            layoutUserInfo.hide()
                             emptyUsersTv.visibility = View.VISIBLE
                             emptyUsersTv.setText(R.string.not_found)
                         }
 
                         is UserState.Found -> {
-                            scrollView.visibility = View.VISIBLE
                             emptyUsersTv.visibility = View.GONE
-                            fillUserInfo(this, it.user)
+                            binding.layoutUserInfo.show(
+                                user = it.user,
+                                onFollowersClickListener = {
+                                    openConnectionsScreen(it, FetchMode.FOLLOWERS)
+                                },
+                                onFollowingClickListener = {
+                                    openConnectionsScreen(it, FetchMode.FOLLOWING)
+                                },
+                            )
                         }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun fillUserInfo(binding: FragmentSearchUserBinding, user: User) {
-        binding.layoutUserInfo.apply {
-            ImageUtil.displayAvatar(userAvatarImg, user.avatarUrl)
-            nameTv.setTextOrGone(user.additionalInfo?.name)
-            userNameTv.setTextOrGone(user.username)
-            descriptionTv.setTextOrGone(user.additionalInfo?.description)
-
-            user.additionalInfo?.followersCount.let { followersCount ->
-                followersTv.setTextOrGone(
-                    followersCount?.let { getString(R.string.patter_followers, it) }
-                )
-
-                if (followersCount != null && followersCount > 0) {
-                    followersTv.setOnClickListener {
-                        openConnectionsScreen(user, FetchMode.FOLLOWERS)
-                    }
-                }
-            }
-
-            user.additionalInfo?.followingCount.let { followingCount ->
-                followingsTv.setTextOrGone(
-                    followingCount?.let { getString(R.string.patter_following, it) }
-                )
-
-                if (followingCount != null && followingCount > 0) {
-                    followingsTv.setOnClickListener {
-                        openConnectionsScreen(user, FetchMode.FOLLOWING)
                     }
                 }
             }
@@ -130,14 +99,5 @@ class SearchUserFragment : BaseFragment<FragmentSearchUserBinding, SearchUserVie
                 fetchMode,
             )
         findNavController().navigate(action)
-    }
-
-    private fun TextView.setTextOrGone(text: String?) {
-        if (text.isNullOrEmpty()) {
-            visibility = View.GONE
-        } else {
-            visibility = View.VISIBLE
-            this.text = text
-        }
     }
 }
