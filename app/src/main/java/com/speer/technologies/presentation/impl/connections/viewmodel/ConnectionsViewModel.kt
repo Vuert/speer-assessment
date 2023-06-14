@@ -5,9 +5,16 @@ import com.speer.technologies.domain.user.repository.UserRepository
 import com.speer.technologies.presentation.base.datadelegate.PresentationDataDelegate
 import com.speer.technologies.presentation.base.viewmodel.BaseViewModel
 import com.speer.technologies.presentation.impl.connections.model.FetchMode
+import com.speer.technologies.utils.common.Wrapper
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlin.math.ceil
+import kotlin.math.roundToInt
+
+private const val PAGE_SIZE = 30
 
 class ConnectionsViewModel(
     presentationDataDelegate: PresentationDataDelegate,
@@ -17,42 +24,69 @@ class ConnectionsViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
+    private val _noMoreItems = MutableStateFlow(false)
+    val noMoreItems = _noMoreItems.asStateFlow()
+
     private val _fetchModeStateFlow = MutableStateFlow(FetchMode.FOLLOWERS)
     val fetchMode = _fetchModeStateFlow.asStateFlow()
 
-    private val _userStateFlow = MutableStateFlow(UserWrapper())
+    private val _userStateFlow = MutableStateFlow(Wrapper<User?>(null))
     val user = _userStateFlow.asSharedFlow()
 
     private val _connectionsStateFlow = MutableStateFlow<List<User>>(listOf())
-    val connections = _connectionsStateFlow.asStateFlow()
+    val connections: StateFlow<List<User>> = _connectionsStateFlow.asStateFlow()
 
     fun init(user: User, fetchMode: FetchMode) {
-        _userStateFlow.value = UserWrapper(user)
+        _userStateFlow.value = Wrapper(user)
         _fetchModeStateFlow.value = fetchMode
-        fetchConnections()
+        loadNextPage()
     }
 
     fun onRefresh() {
-        fetchConnections()
+        refreshAll()
     }
 
-    private fun fetchConnections() {
+    fun onListBottomReached() {
+        loadNextPage()
+    }
+
+    private fun loadNextPage() {
+        loadPage(page = getNextPage()) { newPage ->
+            _connectionsStateFlow.update { currentList ->
+                currentList.toMutableList().also { it.addAll(newPage) }
+            }
+        }
+    }
+
+    private fun refreshAll() {
+        loadPage(page = 0, _connectionsStateFlow::value::set)
+    }
+
+    private inline fun loadPage(page: Int, crossinline block: (List<User>) -> Unit) {
         launchSafe(
             finally = {
                 _isLoading.value = false
             },
         ) {
-            val user = requireNotNull(_userStateFlow.value.user)
             _isLoading.value = true
-            _connectionsStateFlow.value = getFetchConnectionsFun().invoke(user)
+
+            val user = requireNotNull(_userStateFlow.value.value)
+
+            val newPage = getFetchConnectionsFun().invoke(user, page, PAGE_SIZE)
+
+            _noMoreItems.value = newPage.size < PAGE_SIZE
+
+            block.invoke(newPage)
         }
     }
 
-    private fun getFetchConnectionsFun(): suspend (User) -> List<User> =
+
+    private fun getNextPage(): Int =
+        ceil(_connectionsStateFlow.value.size.toDouble() / PAGE_SIZE).roundToInt() + 1
+
+    private fun getFetchConnectionsFun(): suspend (User, Int, Int) -> List<User> =
         when (fetchMode.value) {
             FetchMode.FOLLOWING -> userRepository::getFollowing
             FetchMode.FOLLOWERS -> userRepository::getFollowers
         }
-
-    class UserWrapper(val user: User? = null)
 }

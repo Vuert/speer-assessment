@@ -11,9 +11,9 @@ class UserRepositoryImpl(
     override suspend fun getUserByUserName(username: String): User? =
         userRemoteDatasource.getUserByUserName(username)
 
-    override suspend fun getFollowers(user: User): List<User> =
-        userRemoteDatasource.getFollowers(user)
+    override suspend fun getFollowers(user: User, page: Int, pageSize: Int): List<User> =
+        userRemoteDatasource.getFollowers(user, page, pageSize)
 
-    override suspend fun getFollowing(user: User): List<User> =
-        userRemoteDatasource.getFollowing(user)
+    override suspend fun getFollowing(user: User, page: Int, pageSize: Int): List<User> =
+        userRemoteDatasource.getFollowing(user, page, pageSize)
 }

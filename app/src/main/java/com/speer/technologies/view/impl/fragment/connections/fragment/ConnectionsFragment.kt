@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.widget.LinearLayout
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.speer.technologies.R
 import com.speer.technologies.databinding.FragmentConnectionsBinding
@@ -15,10 +18,15 @@ import com.speer.technologies.view.base.BaseFragment
 import com.speer.technologies.view.impl.common.user.mapper.ParcelableUserToUserMapper
 import com.speer.technologies.view.impl.common.user.mapper.UserToParcelableUserMapper
 import com.speer.technologies.view.impl.fragment.connections.adapter.ConnectionsAdapter
+import com.speer.technologies.view.impl.fragment.connections.adapter.LoadingIndicatorAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+
+private const val ITEMS_AMOUNT_TO_LOAD_NEXT_PAGE = 4
 
 class ConnectionsFragment : BaseFragment<FragmentConnectionsBinding, ConnectionsViewModel>() {
 
@@ -43,10 +51,11 @@ class ConnectionsFragment : BaseFragment<FragmentConnectionsBinding, Connections
     ) {
         binding.materialToolbar.setNavigationOnClickListener { findNavController().navigateUp() }
 
+        // Init title
         viewLifecycleOwner.repeatOnStarted {
             viewModel
                 .user
-                .map { it.user }
+                .map { it.value }
                 .filterNotNull()
                 .combine(viewModel.fetchMode) { user, fetchMode ->
                     when (fetchMode) {
@@ -69,9 +78,14 @@ class ConnectionsFragment : BaseFragment<FragmentConnectionsBinding, Connections
         binding: FragmentConnectionsBinding,
         viewModel: ConnectionsViewModel,
     ) {
-        val adapter = ConnectionsAdapter(onUserClickListener = ::openConnectionsProfile)
+        // Init adapters
+        val connectionsAdapter = ConnectionsAdapter(onUserClickListener = ::openConnectionsProfile)
+        val loadingIndicatorAdapter = LoadingIndicatorAdapter()
 
-        binding.connectionsRv.adapter = adapter
+        binding.connectionsRv.adapter = ConcatAdapter(
+            connectionsAdapter,
+            loadingIndicatorAdapter,
+        )
         binding.connectionsRv.addItemDecoration(
             MaterialDividerItemDecoration(
                 binding.root.context,
@@ -79,10 +93,41 @@ class ConnectionsFragment : BaseFragment<FragmentConnectionsBinding, Connections
             )
         )
 
-        viewLifecycleOwner.repeatOnStarted {
-            viewModel.connections.collectLatest {
-                adapter.submitList(it)
+        // Init pagination
+        var noMoreItems = false
+        var isLoading = false
+
+        val listBottomListener = object : RecyclerView.OnScrollListener() {
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager?
+
+                if (layoutManager != null &&
+                    !isLoading &&
+                    !noMoreItems &&
+                    layoutManager.findLastCompletelyVisibleItemPosition() ==
+                    connectionsAdapter.itemCount - ITEMS_AMOUNT_TO_LOAD_NEXT_PAGE - 1
+                ) {
+                    viewModel.onListBottomReached()
+                }
             }
+        }
+        binding.connectionsRv.addOnScrollListener(listBottomListener)
+
+        // Listen values
+        viewLifecycleOwner.repeatOnStarted {
+            viewModel
+                .connections
+                .collectLatest(connectionsAdapter::submitList)
+        }
+        viewLifecycleOwner.repeatOnStarted {
+            viewModel
+                .isLoading
+                .onEach { isLoading = it }
+                .collectLatest(loadingIndicatorAdapter::isLoading::set)
+        }
+        viewLifecycleOwner.repeatOnStarted {
+            viewModel.noMoreItems.collectLatest { noMoreItems = it }
         }
     }
 
@@ -99,7 +144,10 @@ class ConnectionsFragment : BaseFragment<FragmentConnectionsBinding, Connections
         viewModel: ConnectionsViewModel
     ) {
         viewLifecycleOwner.repeatOnStarted {
-            viewModel.isLoading.collectLatest(binding.swipeRefresh::setRefreshing)
+            viewModel
+                .isLoading
+                .filterNot { it }
+                .collectLatest(binding.swipeRefresh::setRefreshing)
         }
 
         binding.swipeRefresh.setOnRefreshListener { viewModel.onRefresh() }
