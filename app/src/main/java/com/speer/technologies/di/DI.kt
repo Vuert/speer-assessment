@@ -8,6 +8,7 @@ import com.speer.technologies.datasource.user.datasource.UserRemoteDatasourceImp
 import com.speer.technologies.datasource.user.util.GitHubApiRequestInterceptor
 import com.speer.technologies.domain.user.repository.UserRepository
 import com.speer.technologies.presentation.base.datadelegate.PresentationDataDelegate
+import com.speer.technologies.presentation.impl.connectionprofile.viewmodel.ConnectionProfileViewModel
 import com.speer.technologies.presentation.impl.connections.viewmodel.ConnectionsViewModel
 import com.speer.technologies.presentation.impl.datadelegate.DefaultPresentationDataDelegate
 import com.speer.technologies.presentation.impl.searchUsers.viewmodel.SearchUserViewModel
@@ -84,6 +85,13 @@ object DI {
 
         viewModel {
             ConnectionsViewModel(
+                presentationDataDelegate = get(),
+                userRepository = get(),
+            )
+        }
+
+        viewModel {
+            ConnectionProfileViewModel(
                 presentationDataDelegate = get(),
                 userRepository = get(),
             )
