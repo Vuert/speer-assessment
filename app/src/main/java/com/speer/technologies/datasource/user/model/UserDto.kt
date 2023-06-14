@@ -19,8 +19,8 @@ data class UserDto(
     val bio: String? = null,
 
     @SerializedName("followers")
-    val followers: Int,
+    val followers: Int?,
 
     @SerializedName("following")
-    val following: Int,
+    val following: Int?,
 )

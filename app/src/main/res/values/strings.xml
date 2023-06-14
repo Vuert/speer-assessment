@@ -6,4 +6,6 @@
     <string name="hint_search">Search</string>
     <string name="start_typing_username">Please, start typing user name</string>
     <string name="not_found">Not found</string>
+    <string name="title_followers">%1$s followers</string>
+    <string name="title_following">%1$s following</string>
 </resources>

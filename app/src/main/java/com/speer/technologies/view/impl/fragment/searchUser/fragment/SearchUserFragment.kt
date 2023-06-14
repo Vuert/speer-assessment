@@ -7,15 +7,18 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
-import com.bumptech.glide.Glide
+import androidx.navigation.fragment.findNavController
 import com.speer.technologies.R
 import com.speer.technologies.databinding.FragmentSearchUserBinding
 import com.speer.technologies.domain.user.model.User
+import com.speer.technologies.presentation.impl.connections.model.FetchMode
 import com.speer.technologies.presentation.impl.searchUsers.model.UserState
 import com.speer.technologies.presentation.impl.searchUsers.viewmodel.SearchUserViewModel
 import com.speer.technologies.utils.extensions.common.EMPTY
 import com.speer.technologies.utils.extensions.lifecycle.repeatOnStarted
+import com.speer.technologies.utils.view.ImageUtil
 import com.speer.technologies.view.base.BaseFragment
+import com.speer.technologies.view.impl.common.user.mapper.UserToParcelableUserMapper
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 
@@ -49,9 +52,6 @@ class SearchUserFragment : BaseFragment<FragmentSearchUserBinding, SearchUserVie
     }
 
     private fun initUsersView(binding: FragmentSearchUserBinding, viewModel: SearchUserViewModel) {
-
-        binding.layoutUserInfo
-
         viewLifecycleOwner.repeatOnStarted {
             viewModel.isLoading.collectLatest {
                 binding.progressBar.isVisible = it
@@ -92,35 +92,44 @@ class SearchUserFragment : BaseFragment<FragmentSearchUserBinding, SearchUserVie
 
     private fun fillUserInfo(binding: FragmentSearchUserBinding, user: User) {
         binding.layoutUserInfo.apply {
-            nameTv.text = user.name
+            ImageUtil.displayAvatar(userAvatarImg, user.avatarUrl)
+            nameTv.setTextOrGone(user.additionalInfo?.name)
             userNameTv.setTextOrGone(user.username)
-            descriptionTv.setTextOrGone(user.description)
-            followersTv.text = resources
-                .getString(R.string.patter_followers, user.followersCount)
-            followingsTv.text = resources
-                .getString(R.string.patter_following, user.followingCount)
+            descriptionTv.setTextOrGone(user.additionalInfo?.description)
 
-            Glide
-                .with(userAvatarImg)
-                .load(user.avatarUrl)
-                .circleCrop()
-                .error(R.drawable.baseline_person)
-                .placeholder(R.drawable.baseline_person)
-                .override(userAvatarImg.width, userAvatarImg.height)
-                .into(userAvatarImg)
+            user.additionalInfo?.followersCount.let { followersCount ->
+                followersTv.setTextOrGone(
+                    followersCount?.let { getString(R.string.patter_followers, it) }
+                )
 
-            if (user.followersCount > 0) {
-                followersTv.setOnClickListener {
-                    // Transition to the next screen
+                if (followersCount != null && followersCount > 0) {
+                    followersTv.setOnClickListener {
+                        openConnectionsScreen(user, FetchMode.FOLLOWERS)
+                    }
                 }
             }
 
-            if (user.followingCount > 0) {
-                followingsTv.setOnClickListener {
-                    // Transition to the next screen
+            user.additionalInfo?.followingCount.let { followingCount ->
+                followingsTv.setTextOrGone(
+                    followingCount?.let { getString(R.string.patter_following, it) }
+                )
+
+                if (followingCount != null && followingCount > 0) {
+                    followingsTv.setOnClickListener {
+                        openConnectionsScreen(user, FetchMode.FOLLOWING)
+                    }
                 }
             }
         }
+    }
+
+    private fun openConnectionsScreen(user: User, fetchMode: FetchMode) {
+        val action = SearchUserFragmentDirections
+            .actionUsersFragmentToConnectionsFragment(
+                UserToParcelableUserMapper().map(user),
+                fetchMode,
+            )
+        findNavController().navigate(action)
     }
 
     private fun TextView.setTextOrGone(text: String?) {

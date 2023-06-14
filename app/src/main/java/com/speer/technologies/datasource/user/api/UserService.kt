@@ -8,4 +8,10 @@ interface UserService {
 
     @GET("/users/{username}")
     suspend fun findUser(@Path("username") username: String): UserDto
+
+    @GET("users/{username}/following")
+    suspend fun fetchFollowing(@Path("username") username: String): List<UserDto>
+
+    @GET("/users/{username}/followers")
+    suspend fun fetchFollowers(@Path("username") username: String): List<UserDto>
 }

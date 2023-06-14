@@ -19,4 +19,16 @@ class UserRemoteDatasourceImpl(
         } catch (ex: HttpException) {
             if (ex.code() == HttpURLConnection.HTTP_NOT_FOUND) null else throw ex
         }
+
+    override suspend fun getFollowers(user: User): List<User> {
+        val dtoFollowers = userService.fetchFollowers(user.username)
+        val mapper = UserDtoToUserMapper()
+        return dtoFollowers.map(mapper::map)
+    }
+
+    override suspend fun getFollowing(user: User): List<User> {
+        val dtoFollowing = userService.fetchFollowing(user.username)
+        val mapper = UserDtoToUserMapper()
+        return dtoFollowing.map(mapper::map)
+    }
 }
