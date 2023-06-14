@@ -7,7 +7,7 @@ data class User(
     val name: String?,
     val description: String?,
     val followersCount: Int,
-    val followingsCount: Int,
+    val followingCount: Int,
 ) {
 
     override fun equals(other: Any?): Boolean =

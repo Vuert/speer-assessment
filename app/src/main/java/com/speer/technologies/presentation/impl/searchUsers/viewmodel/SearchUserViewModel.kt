@@ -1,9 +1,9 @@
-package com.speer.technologies.presentation.impl.users.viewmodel
+package com.speer.technologies.presentation.impl.searchUsers.viewmodel
 
 import com.speer.technologies.domain.user.repository.UserRepository
 import com.speer.technologies.presentation.base.datadelegate.PresentationDataDelegate
 import com.speer.technologies.presentation.base.viewmodel.BaseViewModel
-import com.speer.technologies.presentation.impl.users.model.UsersState
+import com.speer.technologies.presentation.impl.searchUsers.model.UserState
 import com.speer.technologies.utils.extensions.common.EMPTY
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 private const val DEBOUNCE_TIME_MS = 1000L
 
-class UsersViewModel(
+class SearchUserViewModel(
     presentationDataDelegate: PresentationDataDelegate,
     private val userRepository: UserRepository,
 ) : BaseViewModel(presentationDataDelegate) {
@@ -25,7 +25,7 @@ class UsersViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
-    private val _userStateFlow = MutableStateFlow<UsersState>(UsersState.Empty)
+    private val _userStateFlow = MutableStateFlow<UserState>(UserState.Empty)
     val user = _userStateFlow.asStateFlow()
 
     private var searchJob: Job? = null
@@ -49,8 +49,8 @@ class UsersViewModel(
             _isLoading.value = true
             _userStateFlow.value = userRepository
                 .getUserByUserName(query)
-                ?.let(UsersState::Found)
-                ?: UsersState.NotFound
+                ?.let(UserState::Found)
+                ?: UserState.NotFound
         }
     }
 }

@@ -11,22 +11,22 @@ import com.bumptech.glide.Glide
 import com.speer.technologies.R
 import com.speer.technologies.databinding.FragmentSearchUserBinding
 import com.speer.technologies.domain.user.model.User
-import com.speer.technologies.presentation.impl.users.model.UsersState
-import com.speer.technologies.presentation.impl.users.viewmodel.UsersViewModel
+import com.speer.technologies.presentation.impl.searchUsers.model.UserState
+import com.speer.technologies.presentation.impl.searchUsers.viewmodel.SearchUserViewModel
 import com.speer.technologies.utils.extensions.common.EMPTY
 import com.speer.technologies.utils.extensions.lifecycle.repeatOnStarted
 import com.speer.technologies.view.base.BaseFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 
-class SearchUserFragment : BaseFragment<FragmentSearchUserBinding, UsersViewModel>() {
+class SearchUserFragment : BaseFragment<FragmentSearchUserBinding, SearchUserViewModel>() {
 
     override fun onViewBound(binding: FragmentSearchUserBinding, savedInstanceState: Bundle?) {
         initSearchView(binding, viewModel)
         initUsersView(binding, viewModel)
     }
 
-    private fun initSearchView(binding: FragmentSearchUserBinding, viewModel: UsersViewModel) {
+    private fun initSearchView(binding: FragmentSearchUserBinding, viewModel: SearchUserViewModel) {
         binding.searchView.setOnQueryTextListener(
             object : SearchView.OnQueryTextListener {
 
@@ -48,7 +48,7 @@ class SearchUserFragment : BaseFragment<FragmentSearchUserBinding, UsersViewMode
         }
     }
 
-    private fun initUsersView(binding: FragmentSearchUserBinding, viewModel: UsersViewModel) {
+    private fun initUsersView(binding: FragmentSearchUserBinding, viewModel: SearchUserViewModel) {
 
         binding.layoutUserInfo
 
@@ -63,7 +63,7 @@ class SearchUserFragment : BaseFragment<FragmentSearchUserBinding, UsersViewMode
                 binding.apply {
                     TransitionManager.beginDelayedTransition(root, AutoTransition())
                     when (it) {
-                        UsersState.Empty -> {
+                        UserState.Empty -> {
                             layoutUserInfo.followersTv.setOnClickListener(null)
                             layoutUserInfo.followingsTv.setOnClickListener(null)
                             scrollView.visibility = View.GONE
@@ -71,7 +71,7 @@ class SearchUserFragment : BaseFragment<FragmentSearchUserBinding, UsersViewMode
                             emptyUsersTv.setText(R.string.start_typing_username)
                         }
 
-                        UsersState.NotFound -> {
+                        UserState.NotFound -> {
                             layoutUserInfo.followersTv.setOnClickListener(null)
                             layoutUserInfo.followingsTv.setOnClickListener(null)
                             scrollView.visibility = View.GONE
@@ -79,7 +79,7 @@ class SearchUserFragment : BaseFragment<FragmentSearchUserBinding, UsersViewMode
                             emptyUsersTv.setText(R.string.not_found)
                         }
 
-                        is UsersState.Found -> {
+                        is UserState.Found -> {
                             scrollView.visibility = View.VISIBLE
                             emptyUsersTv.visibility = View.GONE
                             fillUserInfo(this, it.user)
@@ -98,7 +98,7 @@ class SearchUserFragment : BaseFragment<FragmentSearchUserBinding, UsersViewMode
             followersTv.text = resources
                 .getString(R.string.patter_followers, user.followersCount)
             followingsTv.text = resources
-                .getString(R.string.patter_following, user.followingsCount)
+                .getString(R.string.patter_following, user.followingCount)
 
             Glide
                 .with(userAvatarImg)
@@ -109,12 +109,16 @@ class SearchUserFragment : BaseFragment<FragmentSearchUserBinding, UsersViewMode
                 .override(userAvatarImg.width, userAvatarImg.height)
                 .into(userAvatarImg)
 
-            followersTv.setOnClickListener {
-                // Transition to the next screen
+            if (user.followersCount > 0) {
+                followersTv.setOnClickListener {
+                    // Transition to the next screen
+                }
             }
 
-            followingsTv.setOnClickListener {
-                // Transition to the next screen
+            if (user.followingCount > 0) {
+                followingsTv.setOnClickListener {
+                    // Transition to the next screen
+                }
             }
         }
     }
