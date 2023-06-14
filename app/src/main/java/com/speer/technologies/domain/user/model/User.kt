@@ -1,11 +1,11 @@
-package com.speer.technologies.domain.users.model
+package com.speer.technologies.domain.user.model
 
 data class User(
     val id: String,
-    val avatarUrl: String,
+    val avatarUrl: String?,
     val username: String,
-    val name: String,
-    val description: String,
+    val name: String?,
+    val description: String?,
     val followersCount: Int,
     val followingsCount: Int,
 ) {
