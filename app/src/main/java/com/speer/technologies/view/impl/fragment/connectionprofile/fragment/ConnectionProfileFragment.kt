@@ -2,7 +2,9 @@ package com.speer.technologies.view.impl.fragment.connectionprofile.fragment
 
 import android.os.Bundle
 import android.transition.TransitionManager
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.speer.technologies.R
 import com.speer.technologies.databinding.FragmentConnectionProfileBinding
 import com.speer.technologies.presentation.impl.connectionprofile.viewmodel.ConnectionProfileViewModel
 import com.speer.technologies.utils.extensions.lifecycle.repeatOnStarted
@@ -29,8 +31,18 @@ class ConnectionProfileFragment :
         binding: FragmentConnectionProfileBinding,
         savedInstanceState: Bundle?
     ) {
+        initToolbar(binding)
         initSwipeRefresh(binding, viewModel)
         initUserInfoLayout(binding, viewModel)
+    }
+
+    private fun initToolbar(binding: FragmentConnectionProfileBinding) {
+        binding.layoutUserInfo.apply {
+            toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
+            toolbar.setNavigationOnClickListener {
+                findNavController().navigateUp()
+            }
+        }
     }
 
     private fun initSwipeRefresh(

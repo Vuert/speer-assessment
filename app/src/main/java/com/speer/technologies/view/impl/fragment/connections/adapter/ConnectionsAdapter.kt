@@ -35,7 +35,7 @@ class ConnectionsAdapter(
         fun bindUser(user: User) {
             binding.apply {
                 userNameTv.text = user.username
-                ImageUtil.displayAvatar(connectionAvatarImg, user.avatarUrl, circleCrop = true)
+                ImageUtil.displayAvatar(connectionAvatarImg, user.avatarUrl)
             }
         }
     }
