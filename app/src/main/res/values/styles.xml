@@ -1,0 +1,10 @@
+<resources>
+
+    <style name="Theme.SpeerTechnologies.Toolbar">
+        <item name="android:background">@color/primary</item>
+        <item name="navigationIconTint">@color/onPrimary</item>
+        <item name="titleTextColor">@color/onPrimary</item>
+        <item name="android:layout_height">@dimen/action_bar_size</item>
+    </style>
+
+</resources>

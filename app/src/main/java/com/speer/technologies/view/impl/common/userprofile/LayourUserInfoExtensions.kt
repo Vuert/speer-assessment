@@ -12,30 +12,33 @@ fun LayoutUserInfoBinding.show(
     onFollowersClickListener: ((User) -> Unit)? = null,
     onFollowingClickListener: ((User) -> Unit)? = null,
 ) {
+    val resources = root.context.resources
+
     root.visibility = View.VISIBLE
+
     ImageUtil.displayAvatar(userAvatarImg, user.avatarUrl)
     nameTv.setTextOrGone(user.additionalInfo?.name)
-    toolbar.title = user.username
-    descriptionTv.setTextOrGone(user.additionalInfo?.description)
+    userNameTv.text = user.username
+    collapsingToolbar.title = user.username
+    descriptionTv.text = user.additionalInfo?.description
+        ?: resources.getString(R.string.no_description)
 
-    user.additionalInfo?.followersCount.let { followersCount ->
-        followersTv.setTextOrGone(
-            followersCount?.let { root.context.getString(R.string.patter_followers, it) }
-        )
+    user.additionalInfo?.followersCount.let {
+        followersTv.text = resources.getString(R.string.patter_followers, it ?: 0)
 
-        if (followersCount != null && followersCount > 0 && onFollowersClickListener != null) {
+        followersTv.setOnClickListener(null)
+        if (it != null && it > 0 && onFollowersClickListener != null) {
             followersTv.setOnClickListener {
                 onFollowersClickListener.invoke(user)
             }
         }
     }
 
-    user.additionalInfo?.followingCount.let { followingCount ->
-        followingsTv.setTextOrGone(
-            followingCount?.let { root.context.getString(R.string.patter_following, it) }
-        )
+    user.additionalInfo?.followingCount.let {
+        followingsTv.text = resources.getString(R.string.patter_following, it ?: 0)
 
-        if (followingCount != null && followingCount > 0 && onFollowingClickListener != null) {
+        followingsTv.setOnClickListener(null)
+        if (it != null && it > 0 && onFollowingClickListener != null) {
             followingsTv.setOnClickListener {
                 onFollowingClickListener.invoke(user)
             }
@@ -44,9 +47,9 @@ fun LayoutUserInfoBinding.show(
 }
 
 fun LayoutUserInfoBinding.hide() {
-    root.visibility = View.GONE
     followersTv.setOnClickListener(null)
     followingsTv.setOnClickListener(null)
+    root.visibility = View.GONE
 }
 
 private fun TextView.setTextOrGone(text: String?) {
