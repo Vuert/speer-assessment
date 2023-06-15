@@ -28,7 +28,7 @@ class ConnectionsAdapter(
 
         init {
             binding.root.setOnClickListener {
-                onUserClickListener.invoke(getItem(adapterPosition))
+                onUserClickListener.invoke(getItem(bindingAdapterPosition))
             }
         }
 
