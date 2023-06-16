@@ -9,4 +9,5 @@
     <string name="title_followers">%1$s followers</string>
     <string name="title_following">%1$s following</string>
     <string name="no_description">No description</string>
+    <string name="empty">Empty</string>
 </resources>

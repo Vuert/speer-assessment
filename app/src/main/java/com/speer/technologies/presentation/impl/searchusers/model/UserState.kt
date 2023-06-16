@@ -1,4 +1,4 @@
-package com.speer.technologies.presentation.impl.searchUsers.model
+package com.speer.technologies.presentation.impl.searchusers.model
 
 import com.speer.technologies.domain.user.model.User
 

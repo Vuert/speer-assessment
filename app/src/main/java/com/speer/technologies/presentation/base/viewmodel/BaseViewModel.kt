@@ -12,7 +12,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * Base ViewModel class, must be a superclass for all ViewModels
@@ -46,7 +45,7 @@ abstract class BaseViewModel(
      * @return [Job] to provide more control over coroutine
      */
     protected inline fun launchSafe(
-        context: CoroutineContext = EmptyCoroutineContext,
+        context: CoroutineContext = workDispatcher,
         start: CoroutineStart = CoroutineStart.DEFAULT,
         crossinline onCancellation: (CancellationException) -> Unit = {},
         noinline onError: (Throwable) -> Unit = ::onError, // Compiler bug, if crossinline, onError is not invoked

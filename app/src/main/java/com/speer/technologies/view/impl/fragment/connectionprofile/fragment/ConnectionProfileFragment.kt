@@ -13,7 +13,6 @@ import com.speer.technologies.view.impl.common.user.mapper.ParcelableUserToUserM
 import com.speer.technologies.view.impl.common.userprofile.show
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 
 class ConnectionProfileFragment :
     BaseFragment<FragmentConnectionProfileBinding, ConnectionProfileViewModel>() {
@@ -69,7 +68,6 @@ class ConnectionProfileFragment :
         viewLifecycleOwner.repeatOnStarted {
             viewModel
                 .user
-                .map { it.value }
                 .filterNotNull()
                 .collectLatest {
                     TransitionManager.beginDelayedTransition(binding.root)

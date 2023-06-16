@@ -5,7 +5,6 @@ import com.speer.technologies.domain.user.repository.UserRepository
 import com.speer.technologies.presentation.base.datadelegate.PresentationDataDelegate
 import com.speer.technologies.presentation.base.viewmodel.BaseViewModel
 import com.speer.technologies.presentation.impl.connections.model.FetchMode
-import com.speer.technologies.utils.common.Wrapper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -30,14 +29,14 @@ class ConnectionsViewModel(
     private val _fetchModeStateFlow = MutableStateFlow(FetchMode.FOLLOWERS)
     val fetchMode = _fetchModeStateFlow.asStateFlow()
 
-    private val _userStateFlow = MutableStateFlow(Wrapper<User?>(null))
+    private val _userStateFlow = MutableStateFlow<User?>(null)
     val user = _userStateFlow.asSharedFlow()
 
     private val _connectionsStateFlow = MutableStateFlow<List<User>>(listOf())
     val connections: StateFlow<List<User>> = _connectionsStateFlow.asStateFlow()
 
     fun init(user: User, fetchMode: FetchMode) {
-        _userStateFlow.value = Wrapper(user)
+        _userStateFlow.value = user
         _fetchModeStateFlow.value = fetchMode
         loadNextPage()
     }
@@ -70,7 +69,7 @@ class ConnectionsViewModel(
         ) {
             _isLoading.value = true
 
-            val user = requireNotNull(_userStateFlow.value.value)
+            val user = requireNotNull(_userStateFlow.value)
 
             val newPage = getFetchConnectionsFun().invoke(user, page, PAGE_SIZE)
 

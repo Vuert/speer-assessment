@@ -1,6 +1,6 @@
-package com.speer.technologies.datasource.user.api
+package com.speer.technologies.datasource.user.remote.service
 
-import com.speer.technologies.datasource.user.model.UserDto
+import com.speer.technologies.datasource.user.remote.model.UserDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
