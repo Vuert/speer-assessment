@@ -5,6 +5,7 @@ import com.speer.technologies.presentation.base.datadelegate.PresentationDataDel
 import com.speer.technologies.presentation.base.viewmodel.BaseViewModel
 import com.speer.technologies.presentation.impl.searchusers.model.UserState
 import com.speer.technologies.utils.extensions.common.EMPTY
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 
 private const val DEBOUNCE_TIME_MS = 1000L
 
+@OptIn(FlowPreview::class)
 class SearchUserViewModel(
     presentationDataDelegate: PresentationDataDelegate,
     private val userRepository: UserRepository,

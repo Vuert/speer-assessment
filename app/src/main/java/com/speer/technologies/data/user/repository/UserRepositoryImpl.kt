@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 
 class UserRepositoryImpl(
@@ -17,27 +18,25 @@ class UserRepositoryImpl(
 ) : UserRepository {
 
     override suspend fun getUserByUserName(username: String): Flow<User?> =
-        withContext(ioDispatcher) {
-            flow {
-                val localUser = userLocalDataSource.getUserByUserName(username)
-                localUser?.let { emit(it) }
+        flow {
+            val localUser = userLocalDataSource.getUserByUserName(username)
+            localUser?.let { emit(it) }
 
-                val remoteUser = userRemoteDatasource.getUserByUserName(username)
-                if (remoteUser == null || remoteUser != localUser) {
-                    emit(remoteUser)
-                }
-
-                // User is deleted on server, remove him from cache
-                if (remoteUser == null && localUser != null) {
-                    userLocalDataSource.removeUser(localUser)
-                }
-
-                // Update cache
-                if (remoteUser != null && remoteUser != localUser) {
-                    userLocalDataSource.addOrUpdateUser(remoteUser)
-                }
+            val remoteUser = userRemoteDatasource.getUserByUserName(username)
+            if (remoteUser == null || remoteUser != localUser) {
+                emit(remoteUser)
             }
-        }
+
+            // User is deleted on server, remove him from cache
+            if (remoteUser == null && localUser != null) {
+                userLocalDataSource.removeUser(localUser)
+            }
+
+            // Update cache
+            if (remoteUser != null && remoteUser != localUser) {
+                userLocalDataSource.addOrUpdateUser(remoteUser)
+            }
+        }.flowOn(ioDispatcher)
 
     override suspend fun getFollowers(user: User, page: Int, pageSize: Int): List<User> =
         withContext(ioDispatcher) {
