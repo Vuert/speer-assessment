@@ -1,4 +1,4 @@
-package com.speer.technologies.view.impl.fragment.searchUser.fragment
+package com.speer.technologies.view.impl.fragment.searchuser.fragment
 
 import android.os.Bundle
 import android.transition.TransitionManager
@@ -10,8 +10,8 @@ import com.speer.technologies.R
 import com.speer.technologies.databinding.FragmentSearchUserBinding
 import com.speer.technologies.domain.user.model.User
 import com.speer.technologies.presentation.impl.connections.model.FetchMode
-import com.speer.technologies.presentation.impl.searchUsers.model.UserState
-import com.speer.technologies.presentation.impl.searchUsers.viewmodel.SearchUserViewModel
+import com.speer.technologies.presentation.impl.searchusers.model.UserState
+import com.speer.technologies.presentation.impl.searchusers.viewmodel.SearchUserViewModel
 import com.speer.technologies.utils.extensions.common.EMPTY
 import com.speer.technologies.utils.extensions.lifecycle.repeatOnStarted
 import com.speer.technologies.view.base.BaseFragment

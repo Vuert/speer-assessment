@@ -2,6 +2,7 @@ package com.speer.technologies.view.impl.fragment.connections.fragment
 
 import android.os.Bundle
 import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ConcatAdapter
@@ -14,6 +15,7 @@ import com.speer.technologies.domain.user.model.User
 import com.speer.technologies.presentation.impl.connections.model.FetchMode
 import com.speer.technologies.presentation.impl.connections.viewmodel.ConnectionsViewModel
 import com.speer.technologies.utils.extensions.lifecycle.repeatOnStarted
+import com.speer.technologies.utils.view.DefaultItemCallback
 import com.speer.technologies.view.base.BaseFragment
 import com.speer.technologies.view.impl.common.user.mapper.ParcelableUserToUserMapper
 import com.speer.technologies.view.impl.common.user.mapper.UserToParcelableUserMapper
@@ -23,7 +25,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 
 private const val ITEMS_AMOUNT_TO_LOAD_NEXT_PAGE = 4
@@ -55,7 +56,6 @@ class ConnectionsFragment : BaseFragment<FragmentConnectionsBinding, Connections
         viewLifecycleOwner.repeatOnStarted {
             viewModel
                 .user
-                .map { it.value }
                 .filterNotNull()
                 .combine(viewModel.fetchMode) { user, fetchMode ->
                     when (fetchMode) {
@@ -79,7 +79,14 @@ class ConnectionsFragment : BaseFragment<FragmentConnectionsBinding, Connections
         viewModel: ConnectionsViewModel,
     ) {
         // Init adapters
-        val connectionsAdapter = ConnectionsAdapter(onUserClickListener = ::openConnectionsProfile)
+        val connectionsAdapter = ConnectionsAdapter(
+            onUserClickListener = ::openConnectionsProfile,
+            itemCallback = DefaultItemCallback(
+                areItemsTheSame = { oldItem, newItem ->
+                    oldItem.id == newItem.id
+                },
+            ),
+        )
         val loadingIndicatorAdapter = LoadingIndicatorAdapter()
 
         binding.connectionsRv.adapter = ConcatAdapter(
@@ -118,6 +125,7 @@ class ConnectionsFragment : BaseFragment<FragmentConnectionsBinding, Connections
         viewLifecycleOwner.repeatOnStarted {
             viewModel
                 .connections
+                .onEach { binding.emptyTv.isVisible = it.isEmpty() }
                 .collectLatest(connectionsAdapter::submitList)
         }
         viewLifecycleOwner.repeatOnStarted {

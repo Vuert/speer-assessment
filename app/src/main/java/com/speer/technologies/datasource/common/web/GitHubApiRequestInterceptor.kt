@@ -1,4 +1,4 @@
-package com.speer.technologies.datasource.user.util
+package com.speer.technologies.datasource.common.web
 
 import com.speer.technologies.BuildConfig
 import okhttp3.Interceptor

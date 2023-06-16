@@ -1,6 +1,6 @@
-package com.speer.technologies.datasource.user.mapper
+package com.speer.technologies.datasource.user.remote.mapper
 
-import com.speer.technologies.datasource.user.model.UserDto
+import com.speer.technologies.datasource.user.remote.model.UserDto
 import com.speer.technologies.domain.user.model.User
 import com.speer.technologies.domain.user.model.UserInfo
 

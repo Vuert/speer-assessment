@@ -1,9 +1,9 @@
-package com.speer.technologies.presentation.impl.searchUsers.viewmodel
+package com.speer.technologies.presentation.impl.searchusers.viewmodel
 
 import com.speer.technologies.domain.user.repository.UserRepository
 import com.speer.technologies.presentation.base.datadelegate.PresentationDataDelegate
 import com.speer.technologies.presentation.base.viewmodel.BaseViewModel
-import com.speer.technologies.presentation.impl.searchUsers.model.UserState
+import com.speer.technologies.presentation.impl.searchusers.model.UserState
 import com.speer.technologies.utils.extensions.common.EMPTY
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 private const val DEBOUNCE_TIME_MS = 1000L
@@ -47,10 +48,16 @@ class SearchUserViewModel(
             },
         ) {
             _isLoading.value = true
-            _userStateFlow.value = userRepository
+            userRepository
                 .getUserByUserName(query)
-                ?.let(UserState::Found)
-                ?: UserState.NotFound
+                .map {
+                    if (it != null) {
+                        UserState.Found(it)
+                    } else {
+                        UserState.NotFound
+                    }
+                }
+                .collect(_userStateFlow::value::set)
         }
     }
 }

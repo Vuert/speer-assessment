@@ -1,4 +1,4 @@
-package com.speer.technologies.datasource.user.model
+package com.speer.technologies.datasource.user.remote.model
 
 import com.google.gson.annotations.SerializedName
 

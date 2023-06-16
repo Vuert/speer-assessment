@@ -4,7 +4,6 @@ import com.speer.technologies.domain.user.model.User
 import com.speer.technologies.domain.user.repository.UserRepository
 import com.speer.technologies.presentation.base.datadelegate.PresentationDataDelegate
 import com.speer.technologies.presentation.base.viewmodel.BaseViewModel
-import com.speer.technologies.utils.common.Wrapper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -16,11 +15,11 @@ class ConnectionProfileViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
-    private val _userStateFlow = MutableStateFlow<Wrapper<User?>>(Wrapper(null))
+    private val _userStateFlow = MutableStateFlow<User?>(null)
     val user = _userStateFlow.asStateFlow()
 
     fun init(user: User) {
-        _userStateFlow.value = Wrapper(user)
+        _userStateFlow.value = user
         fetchConnectionInfo()
     }
 
@@ -34,9 +33,11 @@ class ConnectionProfileViewModel(
                 _isLoading.value = false
             },
         ) {
-            val user = requireNotNull(_userStateFlow.value.value)
+            val user = requireNotNull(_userStateFlow.value)
             _isLoading.value = true
-            _userStateFlow.value = Wrapper(userRepository.getUserByUserName(user.username))
+            userRepository
+                .getUserByUserName(user.username)
+                .collect(_userStateFlow::value::set)
         }
     }
 }
