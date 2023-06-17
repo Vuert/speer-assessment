@@ -15,9 +15,42 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <include
-            android:id="@+id/layoutUserInfo"
-            layout="@layout/layout_user_info" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/notExistLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/not_exist"
+                    android:textColor="@color/onBackground"
+                    android:textSize="@dimen/text_size_default" />
+
+                <TextView
+                    android:id="@+id/backBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_standard_padding"
+                    android:background="?attr/selectableItemBackground"
+                    android:padding="@dimen/half_standard_margin"
+                    android:text="@string/back"
+                    android:textColor="@color/accent"
+                    android:textSize="@dimen/text_size_default" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <include
+                android:id="@+id/layoutUserInfo"
+                layout="@layout/layout_user_info" />
+
+        </FrameLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

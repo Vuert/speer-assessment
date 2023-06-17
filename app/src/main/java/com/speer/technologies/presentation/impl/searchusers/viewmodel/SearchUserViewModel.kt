@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 private const val DEBOUNCE_TIME_MS = 1000L
@@ -36,14 +37,17 @@ class SearchUserViewModel(
     init {
         scope.launch {
             userName
-                .filter { it.isNotEmpty() }
                 .debounce(DEBOUNCE_TIME_MS)
+                .onEach {
+                    searchJob?.cancel()
+                    searchJob = null
+                }
+                .filter { it.isNotEmpty() }
                 .collectLatest(::getUser)
         }
     }
 
     private fun getUser(query: String) {
-        searchJob?.cancel()
         searchJob = launchSafe(
             finally = {
                 _isLoading.value = false
