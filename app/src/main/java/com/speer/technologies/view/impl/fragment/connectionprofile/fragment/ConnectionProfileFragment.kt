@@ -2,6 +2,7 @@ package com.speer.technologies.view.impl.fragment.connectionprofile.fragment
 
 import android.os.Bundle
 import android.transition.TransitionManager
+import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.speer.technologies.R
@@ -10,9 +11,9 @@ import com.speer.technologies.presentation.impl.connectionprofile.viewmodel.Conn
 import com.speer.technologies.utils.extensions.lifecycle.repeatOnStarted
 import com.speer.technologies.view.base.BaseFragment
 import com.speer.technologies.view.impl.common.user.mapper.ParcelableUserToUserMapper
+import com.speer.technologies.view.impl.common.userprofile.hide
 import com.speer.technologies.view.impl.common.userprofile.show
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filterNotNull
 
 class ConnectionProfileFragment :
     BaseFragment<FragmentConnectionProfileBinding, ConnectionProfileViewModel>() {
@@ -31,6 +32,7 @@ class ConnectionProfileFragment :
         savedInstanceState: Bundle?
     ) {
         initToolbar(binding)
+        initButtons(binding)
         initSwipeRefresh(binding, viewModel)
         initUserInfoLayout(binding, viewModel)
     }
@@ -41,6 +43,12 @@ class ConnectionProfileFragment :
             toolbar.setNavigationOnClickListener {
                 findNavController().navigateUp()
             }
+        }
+    }
+
+    private fun initButtons(binding: FragmentConnectionProfileBinding) {
+        binding.backBtn.setOnClickListener {
+            findNavController().navigateUp()
         }
     }
 
@@ -68,10 +76,15 @@ class ConnectionProfileFragment :
         viewLifecycleOwner.repeatOnStarted {
             viewModel
                 .user
-                .filterNotNull()
                 .collectLatest {
                     TransitionManager.beginDelayedTransition(binding.root)
-                    binding.layoutUserInfo.show(it)
+                    if (it != null) {
+                        binding.notExistLayout.visibility = View.GONE
+                        binding.layoutUserInfo.show(it)
+                    } else {
+                        binding.notExistLayout.visibility = View.VISIBLE
+                        binding.layoutUserInfo.hide()
+                    }
                 }
         }
     }

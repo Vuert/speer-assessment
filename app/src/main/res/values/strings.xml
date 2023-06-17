@@ -10,4 +10,6 @@
     <string name="title_following">%1$s following</string>
     <string name="no_description">No description</string>
     <string name="empty">Empty</string>
+    <string name="back">Back</string>
+    <string name="not_exist">Does not exist</string>
 </resources>
